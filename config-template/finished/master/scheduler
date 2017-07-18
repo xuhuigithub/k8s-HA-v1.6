@@ -1,0 +1,5 @@
+##
+# kubernetes scheduler config
+# default config should be adequate
+# Add your own!
+KUBE_SCHEDULER_ARGS="--address=127.0.0.1 --leader-elect=true --v=2"
