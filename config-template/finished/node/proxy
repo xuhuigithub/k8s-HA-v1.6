@@ -1,0 +1,5 @@
+##
+# kubernetes proxy config
+# default config should be adequate
+# Add your own!
+KUBE_PROXY_ARGS="--bind-address=0.0.0.0 --cluster-cidr=10.254.0.0/16 --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig --logtostderr=true --v=2"
