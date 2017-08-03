@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-mysql
+  labels:
+    app: grafana-mysql
+spec:
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: grafana-mysql
+    tier: mysql
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana-mysql
+  labels:
+    app: grafana-mysql
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:  
+      maxSurge: 1
+      #滚动升级时会先启动1个pod
+      maxUnavailable: 0
+      #最大不可用个数，也可以写百分比
+  selector:
+    matchLabels:
+      tier: mysql
+      #选择使用的模板
+  template:
+    metadata:
+      labels:
+        app: grafana-mysql
+        tier: mysql
+    spec:
+      containers:
+      - image: images.xuhui.com/public/mysql:5.6
+        name: grafana-mysql
+        env:
+         - name: MYSQL_ROOT_PASSWORD
+           value: xuhui
+         - name: MYSQL_USER
+           value: xuhui
+         - name: MYSQL_PASSWORD
+           value: xuhui
+         - name: MYSQL_DATABASE
+           value: grafana
+        ports:
+        - containerPort: 3306
+          name: grafana-mysql
+        volumeMounts:
+        - name: mysql-local-storage
+          mountPath: /var/lib/mysql
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+          #检测端口是否存活
+          initialDelaySeconds: 40
+          timeoutSeconds: 10   
+        readinessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 30
+          successThreshold: 1
+      volumes:
+      - name: mysql-local-storage
+        hostPath:
+          path: /data/grafana/mysqldb

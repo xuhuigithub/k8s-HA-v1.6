@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana-zabbix
+  labels:
+    myapp: grafana-zabbix
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:  
+    #根据replicas 的不同调整预先启动的容器个数与最大不可用个数
+      maxSurge: 1
+      #滚动升级时会先启动1个pod
+      maxUnavailable: 0
+      #滚动升级时允许的最大Unavailable的pod个数
+  selector:
+    matchLabels:
+      myapp: grafana-zabbix
+  template:
+    metadata:
+      labels:
+        myapp: grafana-zabbix
+    spec:
+      containers:
+      - name: grafana-zabbix
+        image: images.xuhui.com/library/grafana:v4.3.2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: "xuhui"
+          #所有环境变量的值最好加上双引
+        - name: GF_INSTALL_PLUGINS
+          value: "grafana-clock-panel,alexanderzobnin-zabbix-app,grafana-piechart-panel"
+        - name: GF_DATABASE_TYPE
+          value: mysql
+        - name: GF_DATABASE_HOST
+          value: grafana-mysql:3306
+        - name: GF_DATABASE_USER
+          value: xuhui
+        - name: GF_DATABASE_NAME
+          value: grafana
+        - name: GF_DATABASE_PASSWORD
+          value: xuhui
+        volumeMounts:
+        - mountPath: /var/lib/grafana/plugins
+          name: grafana-plugins
+        ports:
+          - containerPort: 3000
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 90
+          #必须大于readinessProbe.initialDelaySeconds
+          timeoutSeconds: 10   
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+            scheme: HTTP
+            #or https?
+          initialDelaySeconds: 60
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: "1000m"
+            #需要1个cpu
+            memory: "1024Mi"
+            #1G内存
+          limits:
+            cpu: "2000m"
+            memory: "2048Mi"
+      volumes:
+      - name: grafana-plugins
+        hostPath:
+          path: /data/grafana/plugins
