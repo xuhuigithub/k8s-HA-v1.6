@@ -27,7 +27,7 @@ data:
       }
   low-disk-space.rules: |
     ALERT NodeLowRootDisk
-      IF ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 1
+      IF ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 85
       FOR 2m
       LABELS {
         severity="page"
