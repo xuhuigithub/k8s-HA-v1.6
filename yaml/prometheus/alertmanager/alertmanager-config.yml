@@ -88,3 +88,4 @@ data:
     - name: 'webhook_alert'
       webhook_configs:
       - url: 'http://192.168.206.132:8022/sms/po'
+       # 向指定url 发送固定格式的json内容(POST)
