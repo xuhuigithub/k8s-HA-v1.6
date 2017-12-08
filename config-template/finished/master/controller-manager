@@ -2,8 +2,9 @@
 # The following values are used to configure the kubernetes controller-manager
 # defaults from config and apiserver should be adequate
 # Add your own!
-KUBE_CONTROLLER_MANAGER_ARGS="--address=127.0.0.1 --allocate-node-cidrs=true --service-cluster-ip-range=10.254.0.0/16 --cluster-cidr=10.125.0.0/16 --cluster-name=kubernetes --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.pem --cluster-signing-key-file=/etc/kubernetes/ssl/ca-key.pem --service-account-private-key-file=/etc/kubernetes/ssl/ca-key.pem --root-ca-file=/etc/kubernetes/ssl/ca.pem --leader-elect=true --v=2 --node-monitor-grace-period=10s --pod-eviction-timeout=40s"
-#--node-monitor-grace-period=10s
-#监控node状态的时间间隔
+KUBE_CONTROLLER_MANAGER_ARGS="--address=127.0.0.1 --allocate-node-cidrs=true --service-cluster-ip-range=10.254.0.0/16 --cluster-cidr=10.125.0.0/16 --cluster-name=kubernetes --cluster-signing-cert-file=/etc/kubernetes/ssl/ca.pem --cluster-signing-key-file=/etc/kubernetes/ssl/ca-key.pem --service-account-private-key-file=/etc/kubernetes/ssl/ca-key.pem --root-ca-file=/etc/kubernetes/ssl/ca.pem --leader-elect=true --v=2 --node-monitor-grace-period=30s --pod-eviction-timeout=40s"
+#--node-monitor-grace-period=40s
+#监控node状态的时间间隔,这个在节点启动容器较多时（负载过高时）应将时间调整的稍微长一点且必须是kubeket 选项--node-status-update-frequency（默认为10秒）的N倍
+#参考:http://www.linuxidc.com/Linux/2017-10/147491.htm
 #--pod-eviction-timeout=40s
 #当一个node不可用后超过这段时间将node上的所有容器迁移
