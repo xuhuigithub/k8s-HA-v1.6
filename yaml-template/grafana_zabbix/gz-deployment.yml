@@ -48,13 +48,14 @@ spec:
           - containerPort: 3000
             protocol: TCP
         livenessProbe:
-          httpGet:
-            path: /
+          # 存活探针，如果探针失败则重启容器
+          tcpSocket:
             port: 3000
-          initialDelaySeconds: 90
+          initialDelaySeconds: 120
           #必须大于readinessProbe.initialDelaySeconds
           timeoutSeconds: 10   
         readinessProbe:
+          # endpoint可用检测探针，如果探针失败则将容器从endpoint列表中移除
           httpGet:
             path: /
             port: 3000
