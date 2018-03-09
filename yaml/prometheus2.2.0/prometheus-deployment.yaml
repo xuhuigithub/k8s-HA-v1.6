@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: prometheus-monitoring
+    version: v2.0.0
+  name: prometheus-monitoring
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-monitoring
+  template:
+    metadata:
+      name: prometheus-monitoring
+      labels:
+        app: prometheus-monitoring
+    spec:
+      serviceAccountName: prometheus
+      containers:
+      # Prometheus server
+      - name: prometheus
+        image: registry.chinadaas.com/kubernetes/prometheus:v2.2.0
+        args:
+          - '--storage.tsdb.retention=36h'
+          - '--storage.tsdb.path=/home'
+          - '--config.file=/etc/prometheus/prometheus.yml'
+        ports:
+        - name: web
+          containerPort: 9090
+        volumeMounts:
+        - name: config-volume-prometheus
+          mountPath: /etc/prometheus
+        resources:
+          limits:
+            cpu: 12000m
+            memory: 10000Mi
+          requests:
+            cpu: 4000m
+            memory: 4000Mi
+
+      volumes:
+      - name: config-volume-prometheus
+        configMap:
+          name: prometheus
+      nodeSelector:
+        kubernetes.io/hostname: node2
