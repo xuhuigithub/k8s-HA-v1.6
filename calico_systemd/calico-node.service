@@ -9,7 +9,7 @@ PermissionsStartOnly=true
 ExecStart=/usr/bin/docker run --net=host --privileged --name=calico-node \
                               -e ETCD_ENDPOINTS=http://192.168.61.133:2379,http://192.168.61.134:2379,http://192.168.61.135:2379 \
                               -e NODENAME=master1 \
-                              -e IP=192.168.61.133 \
+                              -e IP=192.168.61.133/24 \
                               -e IP6= \
                               -e AS= \
                               -e CALICO_IPV4POOL_CIDR=10.125.0.0/16 \
